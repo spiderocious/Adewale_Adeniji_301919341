@@ -1,0 +1,103 @@
+=== Inserting the event history for two loans ===
+Inserted 6 events.
+
+=== Query 1: the full timeline of loan APP-1004 (sorted) ===
+[
+  {
+    _id: ObjectId('6af9e7c2e4a27c96b2d6273f'),
+    event_id: 'EV-001',
+    application_ref: 'APP-1004',
+    event_type: 'submitted',
+    occurred_at: ISODate('2026-03-20T08:45:00.000Z'),
+    details: {
+      requested_amount: 2500,
+      term_months: 9
+    }
+  },
+  {
+    _id: ObjectId('6af9e7c2e4a27c96b2d62740'),
+    event_id: 'EV-002',
+    application_ref: 'APP-1004',
+    event_type: 'approved',
+    occurred_at: ISODate('2026-03-22T09:00:00.000Z'),
+    details: {
+      approved_by: 'officer_7',
+      risk_band: 'B'
+    }
+  },
+  {
+    _id: ObjectId('6af9e7c2e4a27c96b2d62741'),
+    event_id: 'EV-003',
+    application_ref: 'APP-1004',
+    event_type: 'disbursed',
+    occurred_at: ISODate('2026-03-22T12:00:00.000Z'),
+    details: {
+      amount: 2500,
+      channel: 'mobile_money'
+    }
+  },
+  {
+    _id: ObjectId('6af9e7c2e4a27c96b2d62742'),
+    event_id: 'EV-004',
+    application_ref: 'APP-1004',
+    event_type: 'repayment_made',
+    occurred_at: ISODate('2026-04-21T10:00:00.000Z'),
+    details: {
+      amount: 300,
+      method: 'wallet'
+    }
+  }
+]
+
+=== Query 2: all disbursement events, projected ===
+[
+  {
+    application_ref: 'APP-1004',
+    details: {
+      amount: 2500,
+      channel: 'mobile_money'
+    }
+  }
+]
+
+=== Query 3 (aggregation): total repaid per loan ===
+[
+  {
+    _id: 'APP-1004',
+    total_repaid: 300,
+    payments: 1
+  }
+]
+
+=== Query 4 (aggregation): event count by type ===
+[
+  {
+    _id: 'submitted',
+    count: 2
+  },
+  {
+    _id: 'approved',
+    count: 1
+  },
+  {
+    _id: 'disbursed',
+    count: 1
+  },
+  {
+    _id: 'repayment_made',
+    count: 1
+  },
+  {
+    _id: 'closed',
+    count: 1
+  }
+]
+
+=== Validation test 1: reject an invalid event_type ===
+  Rejected as expected: 121 (document validation)
+
+=== Validation tests (all rejected as designed) ===
+  Test 1 - invalid event_type ('cancelled_by_alien') -> rejected, code 121 (document validation)
+  Test 2 - wrong type for occurred_at (string) -> rejected, code 121 (document validation)
+  Test 3 - duplicate event_id ('EV-001') -> rejected, code 11000 (duplicate key)
+  Final document count after rejected inserts: 6 (unchanged)

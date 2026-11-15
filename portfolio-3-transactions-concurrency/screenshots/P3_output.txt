@@ -1,0 +1,10 @@
+# Portfolio 3 - live run output (RemoteFund)
+Generated: Sun Nov 15 18:10:53 WAT 2026 | PostgreSQL 18.1
+
+## Part A: COMMIT / ROLLBACK (single session)
+- COMMIT: balance 2500 -> 2000 made permanent.
+- ROLLBACK: a mistaken -9999 showed -7999 inside the txn, then ROLLBACK restored 2000.
+
+## Part B: Concurrency (two sessions)
+### Lost update (no locking): both read 2000, both wrote 1900 -> FINAL = 1900 (one repayment lost)
+### Fix (SELECT ... FOR UPDATE): B's locked read BLOCKED 1156 ms waiting for A, then read 1900 and wrote 1800 -> FINAL = 1800 (nothing lost)

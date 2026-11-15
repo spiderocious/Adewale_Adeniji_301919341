@@ -1,0 +1,17 @@
+# Portfolio 2 - live run output (RemoteFund)
+Generated: Sun Nov 15 18:09:12 WAT 2026
+PostgreSQL 18.1 | 50,000 rows in perf_loan_application
+
+## Index optimisation: lookup by application_ref ('REF-42042')
+
+### BEFORE index (sequential scan):
+ Seq Scan on perf_loan_application  (cost=0.00..1060.00 rows=1 width=13) (actual time=1.460..1.736 rows=1.00 loops=1)
+   Rows Removed by Filter: 49999
+ Planning Time: 0.162 ms
+ Execution Time: 1.756 ms
+
+### AFTER index (index scan):
+ Index Scan using idx_perf_app_ref on perf_loan_application  (cost=0.29..8.31 rows=1 width=13) (actual time=0.008..0.008 rows=1.00 loops=1)
+   Index Cond: (application_ref = 'REF-42042'::text)
+ Planning Time: 0.205 ms
+ Execution Time: 0.028 ms
